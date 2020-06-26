@@ -2,6 +2,8 @@
 
 This repository contains the source code in C for a client-server application that is used for teaching Internet protocols.
 
+## Overview
+
 The application has been developed for the Computer Network Lab 2 in Summer Term 2020 ("Rechnernetze Labor 2") at the University of Applied Sciences (www.hs-esslingen.de).
 
 More information about the lab can be found at www.ktlab.de.
@@ -9,6 +11,14 @@ More information about the lab can be found at www.ktlab.de.
 A specification of the SIMPLE application protocol between client and server can be found below.
 
 Contact: michael.scharf@ktlab.de
+
+## Usage
+
+The Makefile builds one binary for each application.
+
+Applications can be launched from a shell as follows:
+
+`$ bin/<program>`
 
 
 # String Interactive Messaging Protocol with Length Encoding (SIMPLE)
