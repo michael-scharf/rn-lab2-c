@@ -1,6 +1,12 @@
 # rn-2020ss-lab2-c
 
-Quellcode in C für Rechnernetze Labor 2 im SS 2020
+This repository contains the source code in C for a client-server application that is used for teaching during Computer Network Lab 2 in Summer Term 2020 ("Rechnernetze Labor 2") at the University of Applied Sciences (www.hs-esslingen.de).
+
+More information about the lab can be found at www.ktlab.de.
+
+A specification of the SIMPLE application protocol between client and server can be found below.
+
+Contact: michael.scharf@ktlab.de
 
 
 # String Interactive Messaging Protocol with Length Encoding (SIMPLE)
@@ -115,8 +121,8 @@ Reply:
 
 ## References
 
-* RFC 1949
+* HTTP/0.9 description: https://www.w3.org/Protocols/HTTP/AsImplemented.html
 
-* https://www.w3.org/Protocols/HTTP/AsImplemented.html
+* URI syntax: https://www.w3.org/Addressing/BNF.html
 
-* https://www.w3.org/Addressing/BNF.html
+* HTTP/1.0 standard: https://www.rfc-editor.org/rfc/rfc1945.txt
