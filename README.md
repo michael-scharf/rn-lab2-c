@@ -1,6 +1,8 @@
 # rn-2020ss-lab2-c
 
-This repository contains the source code in C for a client-server application that is used for teaching during Computer Network Lab 2 in Summer Term 2020 ("Rechnernetze Labor 2") at the University of Applied Sciences (www.hs-esslingen.de).
+This repository contains the source code in C for a client-server application that is used for teaching Internet protocols.
+
+The application has been developed for the Computer Network Lab 2 in Summer Term 2020 ("Rechnernetze Labor 2") at the University of Applied Sciences (www.hs-esslingen.de).
 
 More information about the lab can be found at www.ktlab.de.
 
