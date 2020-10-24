@@ -1,4 +1,4 @@
-# rn-2020ss-lab2-c
+# Repository lab2-c
 
 This repository contains the source code in C for a client-server application that is used for teaching Internet protocols.
 
