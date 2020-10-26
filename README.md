@@ -4,7 +4,7 @@ This repository contains the source code in C for a client-server application th
 
 ## Overview
 
-The application has been developed for the Computer Network Lab 2 in Summer Term 2020 ("Rechnernetze Labor 2") at the University of Applied Sciences (www.hs-esslingen.de).
+The application has been developed for the Computer Network Lab 2 in Winter Term 2020/2021 ("Rechnernetze Labor 2") at the University of Applied Sciences (www.hs-esslingen.de).
 
 More information about the lab can be found at www.ktlab.de.
 
@@ -27,8 +27,7 @@ Applications can be launched from a shell as follows:
 
 ### Protocol Design
 
-String Interactive Messaging Protocol with Length Encoding (SIMPLE) is a straightforward client-server protocol
-based on the pre-standard HTTP version HTTP/0.9.
+String Interactive Messaging Protocol with Length Encoding (SIMPLE) is a straightforward client-server protocol based on the pre-standard HTTP version HTTP/0.9.
 
 The objective of SIMPLE is to perform client-server text message exchanges with defined message length. The protocol encodes the message length in bytes inside the message body. Otherwise, the message only contains empty text, but the text is conveniently formated to facilitate analysis. 
 
@@ -41,7 +40,7 @@ URIs in SIMPLE only consist of one, two, or three parameter using following form
 
 	/<length>[?<iterations>[+<delay>]]
 
-In order to be compatible with Web browsers, SIMPLE servers deviate from the HTTP/0.9: SIMPLE servers always send a HTTP/1.0 reply, no matter whether the query uses a GET HTTP/0.9 or HTTP/1.0.
+In order to be compatible with Web browsers, SIMPLE servers support both HTTP/0.9 and HTTP/1.0: SIMPLE servers send a reply with HTTP/1.0 header if the request uses HTTP/1.0 syntax. Otherwise, the reply uses no HTTP/1.0 header.
 
 
 ### Request
@@ -53,15 +52,15 @@ Requests consists of a single request line with the following formate:
 The maximum length of a request line is 4095 byte.
 
 Valid values are: 
-* Length (in byte): 93 <= length <= 10000000
-  - Requests length > 0 are accepted, but the minimum response size is always 93 byte
+* Length (in byte): 13 <= length <= 10000000
+  - Requests length > 0 are accepted, but the minimum response size is always 13 byte
   - A request with length == 0 results in an error
 * Iterations: iterations > 0 with the default iterations = 1
-* Delay (in ms): delay >= 0 with the default delay = 0  
+* Delay (in ms): delay >= 0 with the default delay = 0
 
 Example for valid requests are:
 
-Minimal request: `GET /93\r\n`
+Minimal request: `GET /13\r\n`
 
 Longer request: `GET /400\r\n`
 
@@ -74,8 +73,6 @@ HTTP/1.0 compatibility: `GET /1000 HTTP/1.0\r\n`
 
 ### Response 
 
-Unlike the HTTP/0.9 standard, a SIMPLE reply always contains a HTTP/1.0 status line.
-
 SIMPLE formats the text to an alignment of 80 bytes per line. Every 10 bytes are highlighted:
 
 	12345678901234567890123456789012345678901234567890123456789012345678901234567890
@@ -84,6 +81,8 @@ SIMPLE formats the text to an alignment of 80 bytes per line. Every 10 bytes are
 The last two chars on every line are CRLF ("\r\n").
 
 The last 13 chars of every message encode the length and terminate by a '!': `00000xxxxx!\r\n`
+
+If a HTTP/1.0 query is recieved, a SIMPLE server replies with a HTTP/1.0 header that includes 80 bytes.
 
 ### Errors
 
@@ -100,6 +99,20 @@ Request:
 
 Reply:
 
+	........._........._........._........._........._........._........._........
+	........._........._........._........._........._........._........._........
+	........._........._........._........._........._........._........._........
+	........._........._........._........._........._........._........._........
+	........._........._........._........._........._........._.......0000000400!
+
+### Example 2
+
+Request:
+
+	GET /400 HTTP/1.0
+
+Reply:
+
 	HTTP/1.0 200 OK
 	Server: Rechnernetze SimpleServer
 	Content-type: text/plain
@@ -109,7 +122,7 @@ Reply:
 	........._........._........._........._........._........._........._........
 	........._........._........._........._........._........._.......0000000400!
 
-### Example 2
+### Example 3
 
 Request:
 
@@ -133,8 +146,8 @@ Reply:
 
 ## References
 
-* HTTP/0.9 description: https://www.w3.org/Protocols/HTTP/AsImplemented.html
+* RFC 1949
 
-* URI syntax: https://www.w3.org/Addressing/BNF.html
+* https://www.w3.org/Protocols/HTTP/AsImplemented.html
 
-* HTTP/1.0 standard: https://www.rfc-editor.org/rfc/rfc1945.txt
+* https://www.w3.org/Addressing/BNF.html

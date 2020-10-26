@@ -23,7 +23,7 @@
 void create_response(char *string, int length, int useprefix)
 {
   int offset = 0;
-  if (useprefix > 0) 
+  if (useprefix > 0)
     offset = strlen(RESPONSE_PREFIX);
   if (length < (offset + RESPONSE_ALIGN))
     length = offset + RESPONSE_ALIGN;
@@ -57,7 +57,8 @@ void *client_thread(void *arg)
   char *request = malloc(REQUEST_SIZE);
   char *response = malloc(RESPONSE_SIZE);
   int client_fd = *(int *)arg;
-  int res, bytes, i, length, iterations, delay, valid;
+  int res, bytes, i, length, iterations, delay, prefix, valid;
+  char *eol = NULL;
 
   memset(request, 0, REQUEST_SIZE);
   bytes = 0;
@@ -74,11 +75,13 @@ void *client_thread(void *arg)
       break; /* done */
     }
     bytes += res;
-  } while ((strchr(request, '\n') == NULL) && (bytes < REQUEST_LEN));
+    eol = strchr(request, '\n');
+  } while ((eol == NULL) && (bytes < REQUEST_LEN));
 
   length = 0;
   iterations = 1;
   delay = 0;
+  prefix = 0;
   valid = 0;
 
   res = sscanf(request, "GET /%d?%d+%d", &length, &iterations, &delay);
@@ -100,8 +103,13 @@ void *client_thread(void *arg)
     sprintf(response, "HTTP/1.0 400 Bad request\r\n\r\nSyntax error\r\n");
   }
 
+  if ((eol != NULL) && (strncmp(eol-9, "HTTP/1.0\r\n", 10) == 0))
+    prefix = 1;
+  if ((eol != NULL) && (strncmp(eol-9, "HTTP/1.1\r\n", 10) == 0))
+    prefix = 1;
+
   for (i = 0; i < iterations; i++) {
-    if (valid > 0) create_response(response, length, (i == 0) ? 1 : 0);
+    if (valid > 0) create_response(response, length, (i == 0) ? prefix : 0);
     bytes = 0;
     while (bytes < strlen(response))
     {
