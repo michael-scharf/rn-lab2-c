@@ -46,10 +46,12 @@ void create_response(char *string, int length, int useprefix)
       string[i] = '\n';
     }
   }
-  if (((length - offset - 1) % RESPONSE_LINE) < RESPONSE_ALIGN)
+  if ((length >= (RESPONSE_ALIGN + 2) &&
+      ((length - offset - 1) % RESPONSE_LINE) < RESPONSE_ALIGN)) {
     sprintf(string + length - RESPONSE_ALIGN - 2, "\r\n%010d!\r\n", length);
-  else
+  } else {
     sprintf(string + length - RESPONSE_ALIGN, "%010d!\r\n", length);
+  }
 }
 
 void *client_thread(void *arg)
@@ -103,9 +105,9 @@ void *client_thread(void *arg)
     sprintf(response, "HTTP/1.0 400 Bad request\r\n\r\nSyntax error\r\n");
   }
 
-  if ((eol != NULL) && (strncmp(eol-9, "HTTP/1.0\r\n", 10) == 0))
+  if ((eol != NULL) && (eol > (request+9)) && (strncmp(eol-9, "HTTP/1.0\r\n", 10) == 0))
     prefix = 1;
-  if ((eol != NULL) && (strncmp(eol-9, "HTTP/1.1\r\n", 10) == 0))
+  if ((eol != NULL) && (eol > (request+9)) && (strncmp(eol-9, "HTTP/1.1\r\n", 10) == 0))
     prefix = 1;
 
   for (i = 0; i < iterations; i++) {
