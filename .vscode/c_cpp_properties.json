@@ -12,8 +12,8 @@
                 "NULL=0"
             ],
             "compilerPath": "/usr/bin/gcc",
-            "cStandard": "c18",
-            "cppStandard": "c++14",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
             "intelliSenseMode": "gcc-x86",
             "compilerArgs": [
                 "-march=x86_64"
