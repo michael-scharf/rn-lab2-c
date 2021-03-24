@@ -4,7 +4,7 @@ This repository contains the source code in C for a client-server application th
 
 ## Overview
 
-The application has been developed for the Computer Network Lab 2 in Winter Term 2020/2021 ("Rechnernetze Labor 2") at the University of Applied Sciences (www.hs-esslingen.de).
+The application has been developed for the Computer Network Lab 2 ("Rechnernetze Labor 2") at the University of Applied Sciences (www.hs-esslingen.de).
 
 More information about the lab can be found at www.ktlab.de.
 
