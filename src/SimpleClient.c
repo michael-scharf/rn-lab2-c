@@ -9,6 +9,8 @@
 #define HOST_NAME "localhost"
 #define PORT_NUMBER "80"
 
+#define SOCKET_OPTION_SO_RCVBUF (1460 * 0)
+
 #define REQUEST_LEN 4095
 #define REQUEST_SIZE REQUEST_LEN + 1
 
@@ -41,6 +43,20 @@ int main(int argc, char *argv[])
   {
     sock_fd = socket(result->ai_family, result->ai_socktype,
                      result->ai_protocol);
+
+#ifdef SOCKET_OPTION_SO_RCVBUF
+  if (SOCKET_OPTION_SO_RCVBUF > 0)
+  {
+    int receivebuffer = SOCKET_OPTION_SO_RCVBUF;
+    res = setsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, &receivebuffer, sizeof(receivebuffer));
+    if (res < 0)
+    {
+      perror("Error: Setsockopt");
+      exit(1);
+    }
+  }
+#endif
+
     if (sock_fd < 0)
       continue; /* ignore */
     if (connect(sock_fd, result->ai_addr, result->ai_addrlen) == 0)

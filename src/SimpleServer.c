@@ -4,10 +4,11 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/tcp.h>
 #include <netdb.h>
 #include <pthread.h>
 
-#define PORT_NUMBER "32001"
+#define PORT_NUMBER "50000"
 
 #define REQUEST_LEN 4095
 #define REQUEST_SIZE REQUEST_LEN + 1
@@ -20,7 +21,7 @@
 #define RESPONSE_MARK 10
 #define RESPONSE_ALIGN 13
 
-#define KEEPALIVE_TIME 1000
+#define CLOSEWAIT_TIME 1000
 
 void create_response(char *string, int length, int useprefix)
 {
@@ -65,7 +66,7 @@ void *client_thread(void *arg)
   char *request = malloc(REQUEST_SIZE);
   char *response = malloc(RESPONSE_SIZE);
   int client_fd = *(int *)arg;
-  int res, bytes, i, length, iterations, delay, prefix, valid;
+  int res, bytes, i, length, iterations, delay, prefix, tcp_nodelay, valid;
   char *eol = NULL;
 
   memset(request, 0, REQUEST_SIZE);
@@ -90,12 +91,13 @@ void *client_thread(void *arg)
   iterations = 1;
   delay = 0;
   prefix = 0;
+  tcp_nodelay = 0;
   valid = 0;
 
-  res = sscanf(request, "GET /%d?%d+%d", &length, &iterations, &delay);
+  res = sscanf(request, "GET /%d?%d+%d#%d", &length, &iterations, &delay, &tcp_nodelay);
   if (res > 0)
   {
-    if ((length > 0) && (length <= RESPONSE_LEN) && (iterations > 0) && (delay >= 0))
+    if ((length > 0) && (length <= RESPONSE_LEN) && (iterations > 0) && (delay >= 0) && (tcp_nodelay >= 0))
     {
       valid = 1;
     }
@@ -116,6 +118,17 @@ void *client_thread(void *arg)
   if ((eol != NULL) && (eol > (request + 9)) && (strncmp(eol - 9, "HTTP/1.1\r\n", 10) == 0))
     prefix = 1;
 
+  if (tcp_nodelay > 0)
+  {
+    int flag = 1;
+    res = setsockopt(client_fd, SOL_TCP, TCP_NODELAY, &flag, sizeof(flag));
+    if (res < 0)
+    {
+      perror("Error: Setsockopt");
+      exit(1);
+    }
+  }
+
   for (i = 0; i < iterations; i++)
   {
     if (valid > 0)
@@ -135,7 +148,7 @@ void *client_thread(void *arg)
       usleep(delay * 1000);
   }
 
-  usleep(KEEPALIVE_TIME * 1000);
+  usleep(CLOSEWAIT_TIME * 1000);
 
   close(client_fd);
   free(response);

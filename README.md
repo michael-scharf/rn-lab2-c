@@ -1,26 +1,3 @@
-# Repository lab2-c
-
-This repository contains the source code in C for a client-server application that is used for teaching Internet protocols.
-
-## Overview
-
-The application has been developed for the Computer Network Lab 2 ("Rechnernetze Labor 2") at the Hochschule Esslingen University of Applied Sciences (www.hs-esslingen.de).
-
-More information about the lab can be found at www.ktlab.de.
-
-A specification of the SIMPLE application protocol between client and server can be found below.
-
-Contact: michael.scharf@ktlab.de
-
-## Usage
-
-The Makefile builds one binary for each application.
-
-Applications can be launched from a shell as follows:
-
-`$ bin/<program>`
-
-
 # String Interactive Messaging Protocol with Length Encoding (SIMPLE)
 
 ## SIMPLE Protocol Specification
@@ -36,18 +13,17 @@ SIMPLE uses a small subset of the HTTP/0.9 functions. A SIMPLE server can be que
 * Messages are always encoded in ASCII text
 * SIMPLE always uses CRLF ("\r\n")
 
-URIs in SIMPLE only consist of one, two, or three parameter using following format:
+URIs in SIMPLE only consist of one, two, three, or four parameter using following format:
 
-	/<length>[?<iterations>[+<delay>]]
+	/<length>[?<iterations>[+<delay>[#<tcp_nodelay>]]]
 
 In order to be compatible with Web browsers, SIMPLE servers support both HTTP/0.9 and HTTP/1.0: SIMPLE servers send a reply with HTTP/1.0 header if the request uses HTTP/1.0 syntax. Otherwise, the reply uses no HTTP/1.0 header.
-
 
 ### Request
 
 Requests consists of a single request line with the following formate:
 
-	GET /<length>[?<iterations>[+<delay>]] [further characters]\r\n
+	GET /<length>[?<iterations>[+<delay>[#<tcp_nodelay>]]] [further characters]\r\n
 
 The maximum length of a request line is 4095 byte.
 
@@ -57,18 +33,21 @@ Valid values are:
   - A request with length == 0 results in an error
 * Iterations: iterations > 0 with the default iterations = 1
 * Delay (in ms): delay >= 0 with the default delay = 0
+* Tcp_nodelay (0 or 1): Enable socket option TCP_NODELAY if 1, default is 0 (no socket option)
 
 Example for valid requests are:
 
-Minimal request: `GET /13\r\n`
+* Minimal request: `GET /13\r\n`
 
-Longer request: `GET /400\r\n`
+* Longer request: `GET /400\r\n`
 
-Request for 4 messages, each of 5000 byte: `GET /5000?4\r\n`
+* Request for 4 messages, each of 5000 byte: `GET /5000?4\r\n`
 
-Complete request asking for 5 messages with a sleep duration of 2000 ms = 2 s: `GET /200?3+2000\r\n`
+* Request asking for 20 messages with length 100 byte and a sleep duration of 3 ms: `GET /100?20+3\r\n`
 
-HTTP/1.0 compatibility: `GET /1000 HTTP/1.0\r\n`
+* Request asking for 20 messages with length 100 byte and a sleep duration of 3 ms using TCP_NODELAY: `GET /100?20+3#1\r\n`
+
+* HTTP/1.0 compatibility: `GET /1000 HTTP/1.0\r\n`
 
 
 ### Response 
