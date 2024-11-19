@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     /* Further actions could be added below */
   } while (bytes < RESPONSE_LEN);
 
-  printf("\n--- Statistics ---\nSent: %ld bytes\nReceived %ld bytes\n", totalsent, totalrecv);
+  printf("\n--- Statistics ---\nSent: %ld bytes\nReceived: %ld bytes\n", totalsent, totalrecv);
 
   close(sock_fd);
   free(response);
