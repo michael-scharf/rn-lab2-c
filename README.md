@@ -61,7 +61,7 @@ The last two chars on every line are CRLF ("\r\n").
 
 The last 13 chars of every message encode the length and terminate by a '!': `00000xxxxx!\r\n`
 
-If a HTTP/1.0 query is recieved, a SIMPLE server replies with a HTTP/1.0 header that includes 80 bytes.
+If a HTTP/1.0 query is received, a SIMPLE server replies with a HTTP/1.0 header that includes 80 bytes.
 
 ### Errors
 
