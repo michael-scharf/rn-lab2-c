@@ -32,9 +32,9 @@ int main(int argc, char *argv[])
   hints.ai_family = AF_UNSPEC; /* IPv4 or IPv6 */
   hints.ai_socktype = SOCK_STREAM;
 
-  if (getaddrinfo(HOST_NAME, PORT_NUMBER, &hints, &result) != 0)
+  if ((res = getaddrinfo(HOST_NAME, PORT_NUMBER, &hints, &result)) != 0)
   {
-    perror("Error: Unknown host");
+    fprintf(stderr, "Error: Getaddrinfo: %s\n", gai_strerror(res));
     exit(1);
   }
   resultsave = result;
